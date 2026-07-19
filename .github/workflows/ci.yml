@@ -172,6 +172,10 @@ jobs:
   osv-scan:
     name: OSV scan
     needs: detect
+    # Only when there's a dependency manifest to scan. Without this the template
+    # repo itself — which has no Cargo.toml or package.json — goes red on a scan
+    # of nothing, and a template whose own CI is failing teaches the wrong thing.
+    if: needs.detect.outputs.rust == 'true' || needs.detect.outputs.ts == 'true'
     permissions:
       contents: read
       security-events: write
