@@ -1,0 +1,29 @@
+# Paths that change what the build does, or what a Claude session does — both
+# deserve review even when the diff looks like prose.
+#
+# Set OWNER below to a GitHub username (@you) or team (@org/team). Until it's a
+# real handle this file does nothing.
+#
+# CODEOWNERS by itself only *requests* a reviewer. To make it a gate, enable
+# branch protection on main: "Require a pull request before merging" plus
+# "Require review from Code Owners". See
+# .claude/skills/project-conventions/SKILL.md.
+
+# Instructions the model follows. These read like documentation and change
+# behaviour like configuration — the combination is why they're listed first.
+/.claude/            @OWNER
+/CLAUDE.md           @OWNER
+
+# CI: what runs, with what permissions, pinned to which action SHAs.
+/.github/            @OWNER
+
+# Supply-chain posture. Changes here should cite the ADR that decided them.
+/.npmrc              @OWNER
+/pnpm-workspace.yaml @OWNER
+/renovate.json       @OWNER
+/deny.toml           @OWNER
+/Cargo.lock          @OWNER
+/pnpm-lock.yaml      @OWNER
+
+# Decisions and their conventions.
+/docs/adr/           @OWNER
