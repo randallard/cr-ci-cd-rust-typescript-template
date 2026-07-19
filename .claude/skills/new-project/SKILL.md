@@ -84,9 +84,10 @@ Record what was *rejected* and why. That's the part that pays off later.
 
 - `README.md`, `docs/PROGRESS.md` — replace template content with the real thing.
 - Replace `<PROJECT>` placeholders throughout (`grep -rn '<PROJECT>'`).
-- `.github/CODEOWNERS` — replace `@OWNER` with the real handle, or delete the file. A
-  CODEOWNERS full of a placeholder that matches no one is worse than none: it looks like a
-  control and silently isn't. Mention that it only becomes a gate with branch protection.
+- `.github/CODEOWNERS` — defaults to `@randallard`. If this project belongs to someone else,
+  replace every handle or delete the file: a CODEOWNERS pointing at someone without access
+  looks like a control and silently isn't. Mention that it only becomes a gate with branch
+  protection on `main`.
 - Wire the template remote so drift is checkable later:
   `git remote add template <template-url>`
 - Delete `.claude/skills/new-project/` — it has done its job and shouldn't linger.
