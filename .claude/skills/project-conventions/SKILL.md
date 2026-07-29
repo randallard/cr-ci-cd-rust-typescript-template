@@ -77,6 +77,24 @@ Tests passing is not evidence the feature works. Before calling something done, 
 watch it do the thing. Bugs that are green in every test and obvious in four seconds of
 clicking are common enough that this is a standing rule, not a suggestion.
 
+**Run what CI runs, not a hand-rolled approximation of it.** `pnpm build` is `tsc -b && vite
+build`; typechecking by hand with `tsc --noEmit` is a different command that can pass while
+the gate fails.
+
+**And before accepting that a gate can't be run locally, try to run it.** A reusable workflow
+can't be invoked from a checkout — but the *tool* it wraps usually can, and the tool is what
+decides the job. `osv-scan` is `google/osv-scanner-action`, and its scanner is a public
+container:
+
+```
+docker run --rm -v "$PWD:/src" -w /src ghcr.io/google/osv-scanner:v2.3.8 -r ./
+```
+
+Run it against a clean `git archive` export so a local `node_modules` can't change the answer.
+An unrunnable gate is an untrustworthy one: a repo in this family had `osv-scan` failing on
+*every run in its history* while every local check reported clean, because one sentence of
+inherited belief said the job was unobservable.
+
 ## Reviewing changes to `.claude/` and `CLAUDE.md`
 
 **These files are instructions, not documentation.** A change to `.claude/skills/*/SKILL.md` or
@@ -112,6 +130,16 @@ Two honest caveats:
 - Third-party CI actions pinned to full-length commit SHAs, not tags. Tags are mutable.
 - Throwaway tooling installed *beside* the repo needs its own protection; the project's config
   does not reach it.
+- **An advisory exception has to be written once per scanner, and that is not duplication.**
+  `ci.yml` runs two: the package manager's own audit (`pnpm audit`, reading
+  `auditConfig.ignoreGhsas` in `pnpm-workspace.yaml`) and **osv-scanner**, which reads
+  `osv-scanner.toml` and a different database, with `fail-on-vuln: true`. Neither reads the
+  other's config. Consolidating them looks like tidying and silently disarms one gate — put
+  the same ignore and the same reason in both, and make each file name the other so they are
+  dropped together. This has been gotten wrong twice, and both times the reasoning was right
+  and only the location was wrong.
+- An ignore records **why no patched version is usable**, never a quarantine wait or a
+  severity opinion, and names the condition that retires it.
 
 ## Docs that must stay current
 

@@ -95,7 +95,7 @@ sync.
 | | Mechanical | Judgment |
 |---|---|---|
 | **Where** | `docs-hygiene.yml`, every push | `stance-review.yml`, monthly |
-| **Checks** | index accuracy, valid statuses, resolvable supersession links, broken links, journal filenames, ADR bloat tripwire | is this decision still *correct*? |
+| **Checks** | index accuracy, valid statuses, resolvable supersession links, broken links, links that escape the repo, journal filenames, ADR bloat tripwire | is this decision still *correct*? |
 | **Gates?** | yes — only fires on objectively wrong, cheap-to-fix things | never |
 
 A review that blocks CI gets disabled the first busy week, and then you have neither the gate
@@ -103,6 +103,13 @@ nor the habit. So the judgment tier nags and records, and that's all.
 
 Run the mechanical tier locally any time: `python3 scripts/docs-hygiene.py` (no dependencies,
 no virtualenv — it has to work in a Rust-only project too).
+
+One check is deliberately stricter than "does the file exist": **a relative link that resolves
+outside the repo is an error even when the target is there on disk.** Sibling checkouts are a
+property of one machine, not of the repository, so `../../other-repo/docs/…` passes locally and
+breaks every CI run — and existence-first checking is silent exactly where the link is least
+trustworthy. Link out of the repo with a URL. If the other repo has no remote you can link to,
+say the path in prose or inline code rather than making it a link.
 
 ## Licence
 
