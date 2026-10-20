@@ -16,11 +16,19 @@ Claude config, so a brand-new machine with nothing but a clone works.
 
 ## What's opinionated here
 
-**Provable at the strongest tier the language supports.** Rust gets `#![forbid(unsafe_code)]`,
-`proptest`, and `kani` bounded proofs in their own CI job. TypeScript gets `strict` +
-`noUncheckedIndexedAccess` and `fast-check` property tests on a pure core. TS's type system is
-unsound and that's an accepted trade for ecosystem and speed — so the rigor is *engineered in*
-rather than inherited.
+**Provable at the strongest tier the language supports.** "Provable" is a four-rung ladder:
+memory safety, illegal states unrepresentable, property tests, proofs. A project claims only the
+rungs its CI enforces. Rust gets `#![forbid(unsafe_code)]`, `proptest`, and `kani` bounded proofs
+in their own CI job, which fails if there's nothing to prove. Verus is opt-in for named
+invariants. TypeScript gets the strict compiler and lint bar, and `fast-check` property tests on a
+pure core. TS's type system is unsound and that's an accepted trade for ecosystem and speed, so
+the rigor is *engineered in* rather than inherited, and logic that needs more moves to a Rust
+core compiled to WASM.
+
+**The standard's decisions are inherited ADRs.** `docs/adr/1000` and up record why each standard
+is what it is, and every project gets them. Projects number their own ADRs from `0001`. When the
+template changes a standard, it adds a new `1NNN`, and downstream projects pick it up through
+their stance review.
 
 **Functional core / imperative shell**, always. It's what makes the property tests and proofs
 possible; without it there's nothing clean to test.
@@ -63,8 +71,9 @@ with immutable records instead of in tension with them.
     ci.yml               both language paths, self-skipping; all actions SHA-pinned
     docs-hygiene.yml     mechanical checks — this one gates
     stance-review.yml    monthly nag — never gates
+.cargo/config.toml       one-day crate cooldown (min-publish-age)
 docs/
-  adr/                   decisions, one per file, immutable
+  adr/                   decisions, one per file, immutable (1NNN = inherited standards)
   journal/               dated narrative worklog
   reviews/               stance review records
   PROGRESS.md            status + next steps
@@ -78,8 +87,11 @@ One `ci.yml` with both language paths. A `detect` job looks for `Cargo.toml` / `
 and the language jobs skip themselves when their manifest isn't there — a TS-only or Rust-only
 project needs no edits, and neither does one that later grows a second language.
 
-Rust gets fmt / clippy / test / cargo-deny, with **Kani proofs in their own job** so a slow
-proof never delays fast-gate feedback and the check name says which tier failed. TypeScript gets
+Rust gets fmt / clippy / test (all `--locked`) / cargo-deny, with **Kani proofs in their own
+job** so a slow proof never delays fast-gate feedback and the check name says which tier failed.
+The proofs job fails when no harness exists, because Kani otherwise passes with nothing proven.
+`.cargo/config.toml` holds new crate versions back a day (native from Rust 1.100). Every job has
+a `timeout-minutes`, and CI runs Node 24. TypeScript gets
 lint / test / build plus audit, `audit signatures`, and the license allowlist. Pages deploy is
 opt-in per project: set the `DEPLOY_PAGES` repository variable to `true`.
 

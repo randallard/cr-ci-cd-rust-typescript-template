@@ -44,9 +44,10 @@ and record the answer.
 
 ### Shell language
 
-- **TypeScript** (default for anything with a UI) — `strict` + `noUncheckedIndexedAccess`.
-  Chosen for ecosystem, speed, and smoothness, with provability engineered in via a pure core
-  and property tests rather than inherited from the type system.
+- **TypeScript** (default for anything with a UI): the strictness bar in `project-conventions`
+  (ADR-1011), with `typescript` pinned to 6.0.x for now (ADR-1010). Chosen for ecosystem, speed
+  and smoothness, with provability engineered in via a pure core and property tests rather
+  than inherited from the type system.
 - **Rust** — for CLIs, daemons, and backends. `#![forbid(unsafe_code)]` everywhere.
 - **Both** — TS frontend, Rust backend, only when there's genuinely a backend.
 
@@ -57,8 +58,20 @@ don't give you *proofs*, and cost ecosystem — so the trade is deliberate, not 
 
 - **provable-lite** (TS) — pure core, `fast-check` property tests, strict compiler. The
   default for TS projects.
-- **provable** (Rust) — pure core crate, `proptest`, plus `kani` bounded proofs as their own
-  CI job. Default for Rust.
+- **provable** (Rust): pure core crate, `proptest`, plus `kani` bounded proofs as their own
+  CI job. Default for Rust. The proofs job **fails until the first harness exists** (ADR-1004),
+  so either write one for the core this session or record that this project opts out of Kani.
+- **provable+**: adds Verus for a **named** invariant (ADR-1003). Only offer it when the user
+  names something whose violation is a legal or safety harm.
+
+**Always ask these two, whatever the language** (each answer becomes an ADR, yes or no):
+
+- **Logic that needs more than provable-lite?** (ADR-1015) If a TS app holds logic worth
+  *proving* (selection math, eligibility, permission rules), it goes in a Rust crate compiled to
+  WASM under the TS shell, not into TS with extra tooling.
+- **TS strictness extras** (ADR-1012, for any TS project): an **`any` registry**, and
+  **accessibility lint** (jsx-a11y, or axe checks for non-JSX UIs). Present both with their
+  costs. Strongly suggest a11y for anything public- or court-facing.
 
 Record the **promotion condition** in the ADR: what would make you want the stronger tier
 later. The monthly stance review reads those.
@@ -76,7 +89,12 @@ Write one ADR per decision, from `docs/adr/TEMPLATE.md`. **One decision per file
 writing a single "architecture" ADR; that's the bloat this template exists to prevent.
 
 Typically: `0001` rigor tier and language, `0002` storage model, `0003` supply-chain posture,
-`0004` hosting. Update the index. Keep `0000` as-is.
+`0004` hosting, then the two always-asked answers (WASM core, TS extras). Update the index. Keep
+`0000` as-is.
+
+**Leave the `1NNN` ADRs alone.** They're the template's inherited standards (ADR-1000), already
+indexed. Read them: they're the reasoning behind `project-conventions`. If this project deviates
+from one, that's a project ADR in the `0NNN` range citing it.
 
 Record what was *rejected* and why. That's the part that pays off later.
 

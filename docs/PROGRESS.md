@@ -17,7 +17,7 @@ context.>
 <One paragraph, plus links to the ADRs that decided it. Don't restate the ADRs — point at
 them.>
 
-- Rigor tier: <provable-lite / provable> — [ADR-0001](adr/)
+- Rigor tier: <provable-lite / provable / provable+>: [ADR-0001](adr/)
 - Storage: <browser + export/import / backend + DB> — [ADR-0002](adr/)
 
 ## Provability
