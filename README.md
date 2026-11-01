@@ -92,7 +92,8 @@ Rust gets fmt / clippy / test (all `--locked`) / cargo-deny, with **Kani proofs 
 job** so a slow proof never delays fast-gate feedback and the check name says which tier failed.
 The proofs job fails when no harness exists, because Kani otherwise passes with nothing proven.
 `.cargo/config.toml` holds new crate versions back a day (native from Rust 1.100). Every job has
-a `timeout-minutes`, and CI runs Node 24. TypeScript gets
+a `timeout-minutes`, and CI runs the Active LTS (Node 26) while a TS project's `engines`
+floor stays one LTS behind (24, ADR-1020). TypeScript gets
 lint / test / build plus audit, `audit signatures`, and the license allowlist. A project with
 an OpenAPI document (`openapi.yaml` or `openapi/*.yaml`) gets an `api lint` job against the
 [api-standards](https://github.com/randallard/api-standards) ruleset, vendored at a pinned tag
