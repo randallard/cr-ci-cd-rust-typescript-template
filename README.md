@@ -104,8 +104,10 @@ opt-in per project: set the `DEPLOY_PAGES` repository variable to `true`.
 are mutable — the tj-actions/changed-files compromise (CVE-2025-30066) worked by repointing
 existing version tags — and GitHub's guidance calls a SHA the only immutable reference. Note
 `dtolnay/rust-toolchain@stable` is a *branch*, which moves by design; the pin matters most
-exactly where it feels least necessary. Renovate can maintain SHA pins and keep the comments in
-sync.
+exactly where it feels least necessary. The shipped `renovate.json` keeps SHA pins and their
+comments current in each project, with rules for the standards a blind update would break
+(ADR-1021). The template's own pins are bumped by hand from what downstream Renovate has merged,
+because its GitHub copy is a squash mirror.
 
 ## The two review tiers
 
