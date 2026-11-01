@@ -79,6 +79,7 @@ docs/
   PROGRESS.md            status + next steps
 scripts/
   docs-hygiene.py        stdlib-only, runs anywhere
+  vendor-api-standards.sh  vendor the HTTP API ruleset at a tag (ADR-1019)
 ```
 
 ## CI
@@ -92,7 +93,10 @@ job** so a slow proof never delays fast-gate feedback and the check name says wh
 The proofs job fails when no harness exists, because Kani otherwise passes with nothing proven.
 `.cargo/config.toml` holds new crate versions back a day (native from Rust 1.100). Every job has
 a `timeout-minutes`, and CI runs Node 24. TypeScript gets
-lint / test / build plus audit, `audit signatures`, and the license allowlist. Pages deploy is
+lint / test / build plus audit, `audit signatures`, and the license allowlist. A project with
+an OpenAPI document (`openapi.yaml` or `openapi/*.yaml`) gets an `api lint` job against the
+[api-standards](https://github.com/randallard/api-standards) ruleset, vendored at a pinned tag
+by `scripts/vendor-api-standards.sh` (ADR-1019). Pages deploy is
 opt-in per project: set the `DEPLOY_PAGES` repository variable to `true`.
 
 **Every action is pinned to a full commit SHA**, with the version in a trailing comment. Tags

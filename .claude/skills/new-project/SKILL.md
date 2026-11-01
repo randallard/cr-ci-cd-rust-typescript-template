@@ -64,14 +64,20 @@ don't give you *proofs*, and cost ecosystem — so the trade is deliberate, not 
 - **provable+**: adds Verus for a **named** invariant (ADR-1003). Only offer it when the user
   names something whose violation is a legal or safety harm.
 
-**Always ask these two, whatever the language** (each answer becomes an ADR, yes or no):
+**Always ask these three, whatever the language** (each answer becomes an ADR, yes or no):
 
 - **Logic that needs more than provable-lite?** (ADR-1015) If a TS app holds logic worth
   *proving* (selection math, eligibility, permission rules), it goes in a Rust crate compiled to
   WASM under the TS shell, not into TS with extra tooling.
 - **TS strictness extras** (ADR-1012, for any TS project): an **`any` registry**, and
   **accessibility lint** (jsx-a11y, or axe checks for non-JSX UIs). Present both with their
-  costs. Strongly suggest a11y for anything public- or court-facing.
+  costs. Strongly suggest a11y for anything public-facing.
+
+- **Does it expose or consume an HTTP API?** (ADR-1019) If yes, run
+  `scripts/vendor-api-standards.sh <latest api-standards tag>` and start `openapi.yaml` as an
+  OpenAPI 3.1.2 contract before any handler is written. api-standards'
+  `examples/document-storage.yaml` is a complete specification that lints clean, so use it for
+  the shape. If no, the `api-lint` job just skips; say so in the ADR.
 
 Record the **promotion condition** in the ADR: what would make you want the stronger tier
 later. The monthly stance review reads those.
@@ -89,7 +95,7 @@ Write one ADR per decision, from `docs/adr/TEMPLATE.md`. **One decision per file
 writing a single "architecture" ADR; that's the bloat this template exists to prevent.
 
 Typically: `0001` rigor tier and language, `0002` storage model, `0003` supply-chain posture,
-`0004` hosting, then the two always-asked answers (WASM core, TS extras). Update the index. Keep
+`0004` hosting, then the three always-asked answers (WASM core, TS extras, HTTP API). Update the index. Keep
 `0000` as-is.
 
 **Leave the `1NNN` ADRs alone.** They're the template's inherited standards (ADR-1000), already
