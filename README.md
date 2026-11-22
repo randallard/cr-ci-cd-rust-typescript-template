@@ -88,7 +88,8 @@ One `ci.yml` with both language paths. A `detect` job looks for `Cargo.toml` / `
 and the language jobs skip themselves when their manifest isn't there — a TS-only or Rust-only
 project needs no edits, and neither does one that later grows a second language.
 
-Rust gets fmt / clippy / test (all `--locked`) / cargo-deny, with **Kani proofs in their own
+Rust gets fmt / clippy / test (all `--locked`) / cargo-deny (against the shipped `deny.toml`,
+ADR-1024), with **Kani proofs in their own
 job** so a slow proof never delays fast-gate feedback and the check name says which tier failed.
 The proofs job fails when no harness exists, because Kani otherwise passes with nothing proven.
 `.cargo/config.toml` holds new crate versions back a day (native from Rust 1.100). Every job has
