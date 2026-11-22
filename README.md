@@ -106,7 +106,8 @@ existing version tags — and GitHub's guidance calls a SHA the only immutable r
 `dtolnay/rust-toolchain@stable` is a *branch*, which moves by design; the pin matters most
 exactly where it feels least necessary. The shipped `renovate.json` keeps SHA pins and their
 comments current in each project, with rules for the standards a blind update would break
-(ADR-1021). The template's own pins are bumped by hand from what downstream Renovate has merged,
+(ADR-1021), and routine updates merge themselves once CI passes, with majors left to a person
+(ADR-1023). The template's own pins are bumped by hand from what downstream Renovate has merged,
 because its GitHub copy is a squash mirror.
 
 ## The two review tiers
